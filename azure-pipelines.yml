@@ -3,7 +3,7 @@ name: ado-github-pipeline
 trigger: none
 
 pool:
-  name: vikas007-agent
+  name: vikas007_agent
 
 jobs:
 - job: Terraform_Job
