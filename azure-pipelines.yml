@@ -1,31 +1,29 @@
-# agent_vinod_007
-
 name: ado-github-pipeline
 
-trigger: none 
+trigger: none
 
-pool: vikas007-agent
-
+pool:
+  name: vikas007-agent
 
 jobs:
-- job: terraforminstall 
-  displayName: terraform install job1
-  steps: 
-  - task: TerraformInstaller@1
-    displayName: terraform install step01
-    inputs:
-      terraformVersion: 'latest'
+- job: Terraform_Job
+  displayName: "Terraform Job"
 
-- job: terraforminit 
-  dependsOn: terraforminstall #job1
-  displayName: terraform init job2
   steps:
+
+  - checkout: self
+
+  - task: TerraformInstaller@1
+    displayName: "Install Terraform"
+    inputs:
+      terraformVersion: '1.13.2'
+
   - task: TerraformTask@5
+    displayName: "Terraform Init"
     inputs:
       provider: 'azurerm'
       command: 'init'
-      workingDirectory: 'https://github.com/belekarvikas-afk/terraform-practice.git/140726_child_parrant_project/env_parrant'
-      commandOptions: 'init'
+      workingDirectory: '$(Build.SourcesDirectory)/140726_child_parrant_project/env_parrant'
       backendServiceArm: 'adopipeline-app-reg'
       backendAzureRmOverrideSubscriptionID: '09313c5c-930a-453c-a90c-32ef23577e6b'
       backendAzureRmResourceGroupName: 'b18g35-common-rg'
@@ -34,27 +32,27 @@ jobs:
       backendAzureRmKey: 'vikas_ado.tfstate'
 
   - task: TerraformTask@5
+    displayName: "Terraform Validate"
     inputs:
       provider: 'azurerm'
       command: 'validate'
-      workingDirectory: 'https://github.com/belekarvikas-afk/terraform-practice.git/140726_child_parrant_project/env_parrant'
+      workingDirectory: '$(Build.SourcesDirectory)/140726_child_parrant_project/env_parrant'
 
   - task: TerraformTask@5
+    displayName: "Terraform Plan"
     inputs:
       provider: 'azurerm'
       command: 'plan'
-      workingDirectory: 'https://github.com/belekarvikas-afk/terraform-practice.git/140726_child_parrant_project/env_parrant'
+      workingDirectory: '$(Build.SourcesDirectory)/140726_child_parrant_project/env_parrant'
       environmentServiceNameAzureRM: 'adopipeline-app-reg'
       environmentAzureRmOverrideSubscriptionID: '09313c5c-930a-453c-a90c-32ef23577e6b'
 
   - task: TerraformTask@5
+    displayName: "Terraform Apply"
     inputs:
       provider: 'azurerm'
       command: 'apply'
-      workingDirectory: 'https://github.com/belekarvikas-afk/terraform-practice.git/140726_child_parrant_project/env_parrant'
+      workingDirectory: '$(Build.SourcesDirectory)/140726_child_parrant_project/env_parrant'
       commandOptions: '-auto-approve'
       environmentServiceNameAzureRM: 'adopipeline-app-reg'
       environmentAzureRmOverrideSubscriptionID: '09313c5c-930a-453c-a90c-32ef23577e6b'
-
-
-# 140726_child_parrant_project/env_parrant
